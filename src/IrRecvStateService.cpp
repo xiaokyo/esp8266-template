@@ -36,7 +36,7 @@ void IrRecvStateService::onConfigUpdated() {
 
 void IrRecvStateService::recv(HandlerUpdateCallback updateCallback) {
   // 每一秒将rawData 加1
-  if (millis() - lastRecvTime > 1000) {
+  if (millis() - lastRecvTime > 5000) {
     lastRecvTime = millis();
     _state.runTime = String(_state.runTime.toInt() + 1);
     updateCallback();

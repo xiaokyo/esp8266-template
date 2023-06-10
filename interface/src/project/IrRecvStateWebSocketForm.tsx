@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { Input } from "@mui/material";
+import { Input, TextareaAutosize } from "@mui/material";
 
 import { WEB_SOCKET_ROOT } from "../api/endpoints";
 import {
@@ -46,12 +46,15 @@ const IrRecvStateWebSocketForm: FC = () => {
         />
 
         <BlockFormControlLabel
+          style={{ marginTop: 20 }}
           control={
-            <Input
+            <TextareaAutosize
               placeholder="Empty"
               name="rawData"
               value={data.rawData}
               onChange={updateFormValue}
+              cols={100}
+              minRows={4}
             />
           }
           label="RawData"
