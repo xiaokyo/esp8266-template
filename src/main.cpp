@@ -14,7 +14,8 @@ LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getMqttClient(),
                                                         &lightMqttSettingsService);
 
-IrRecvStateService irRecvStateService = IrRecvStateService(&server, esp8266React.getSecurityManager());
+IrRecvStateService irRecvStateService =
+    IrRecvStateService(&server, esp8266React.getSecurityManager(), esp8266React.getFS());
 
 void setup() {
   // start serial and filesystem
@@ -39,6 +40,7 @@ void setup() {
 void loop() {
   // run the framework's loop function
   esp8266React.loop();
+
   irRecvStateService.recv([&]() {
     irRecvStateService.update([&](IrRecvState& state) { return StateUpdateResult::CHANGED; }, "button_press");
   });

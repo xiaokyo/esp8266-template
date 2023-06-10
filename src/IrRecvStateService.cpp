@@ -4,7 +4,7 @@ IRrecv irrecv(IR_RECV_PIN);
 decode_results results;
 unsigned long lastRecvTime{0};
 
-IrRecvStateService::IrRecvStateService(AsyncWebServer* server, SecurityManager* securityManager) :
+IrRecvStateService::IrRecvStateService(AsyncWebServer* server, SecurityManager* securityManager, FS* fs) :
     _httpEndpoint(IrRecvState::read,
                   IrRecvState::update,
                   this,
@@ -18,16 +18,18 @@ IrRecvStateService::IrRecvStateService(AsyncWebServer* server, SecurityManager* 
                server,
                IR_RECV_SETTINGS_SOCKET_PATH,
                securityManager,
-               AuthenticationPredicates::IS_AUTHENTICATED) {
+               AuthenticationPredicates::IS_AUTHENTICATED),
+    _fsPersistence(IrRecvState::read, IrRecvState::update, this, fs, "/config/irRecvState.json") {
   addUpdateHandler([&](const String& originId) { onConfigUpdated(); }, false);
 }
 
 void IrRecvStateService::begin() {
-  _state.rawData = {0};
+  _fsPersistence.readFromFS();
   onConfigUpdated();
 }
 
 void IrRecvStateService::onConfigUpdated() {
+  // 操作io口等操作
   Serial.println("onConfigUpdated, _state.rawData => ");
   Serial.println(_state.rawData);
 }
@@ -36,7 +38,7 @@ void IrRecvStateService::recv(HandlerUpdateCallback updateCallback) {
   // 每一秒将rawData 加1
   if (millis() - lastRecvTime > 1000) {
     lastRecvTime = millis();
-    _state.rawData++;
+    _state.runTime = String(_state.runTime.toInt() + 1);
     updateCallback();
   }
 

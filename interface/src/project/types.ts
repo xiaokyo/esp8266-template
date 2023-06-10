@@ -9,5 +9,6 @@ export interface LightMqttSettings {
 }
 
 export interface IrRecvState {
-  rawData: any;
+  rawData: string;
+  runTime: string;
 }

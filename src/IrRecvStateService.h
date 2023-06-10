@@ -3,6 +3,7 @@
 
 #include <HttpEndpoint.h>
 #include <WebSocketTxRx.h>
+#include <FSPersistence.h>
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRutils.h>
@@ -16,16 +17,20 @@ typedef std::function<void()> HandlerUpdateCallback;
 
 class IrRecvState {
  public:
-  int rawData{0};
+  String rawData{""};
+  String runTime{""};
 
   static void read(IrRecvState& settings, JsonObject& root) {
     root["rawData"] = settings.rawData;
+    root["runTime"] = settings.runTime;
   }
 
   static StateUpdateResult update(JsonObject& root, IrRecvState& irRecvState) {
-    int newRawData = root["rawData"];
-    if (irRecvState.rawData != newRawData) {
+    String newRawData = root["rawData"];
+    String newRunTime = root["runTime"];
+    if (!irRecvState.rawData.equals(newRawData) || !irRecvState.runTime.equals(newRunTime)) {
       irRecvState.rawData = newRawData;
+      irRecvState.runTime = newRunTime;
       return StateUpdateResult::CHANGED;
     }
     return StateUpdateResult::UNCHANGED;
@@ -34,7 +39,7 @@ class IrRecvState {
 
 class IrRecvStateService : public StatefulService<IrRecvState> {
  public:
-  IrRecvStateService(AsyncWebServer* server, SecurityManager* securityManager);
+  IrRecvStateService(AsyncWebServer* server, SecurityManager* securityManager, FS* fs);
 
   void begin();
 
@@ -43,6 +48,7 @@ class IrRecvStateService : public StatefulService<IrRecvState> {
  private:
   HttpEndpoint<IrRecvState> _httpEndpoint;
   WebSocketTxRx<IrRecvState> _webSocket;
+  FSPersistence<IrRecvState> _fsPersistence;
 
   void registerConfig();
   void onConfigUpdated();

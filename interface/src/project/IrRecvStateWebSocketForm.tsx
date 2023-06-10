@@ -37,6 +37,18 @@ const IrRecvStateWebSocketForm: FC = () => {
           control={
             <Input
               placeholder="Empty"
+              name="runTime"
+              value={data.runTime}
+              onChange={updateFormValue}
+            />
+          }
+          label="RunTime"
+        />
+
+        <BlockFormControlLabel
+          control={
+            <Input
+              placeholder="Empty"
               name="rawData"
               value={data.rawData}
               onChange={updateFormValue}
