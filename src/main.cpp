@@ -1,6 +1,7 @@
 #include <ESP8266React.h>
 #include <LightMqttSettingsService.h>
 #include <LightStateService.h>
+#include "IrRecvStateService.h"
 
 #define SERIAL_BAUD_RATE 115200
 
@@ -13,6 +14,8 @@ LightStateService lightStateService = LightStateService(&server,
                                                         esp8266React.getMqttClient(),
                                                         &lightMqttSettingsService);
 
+IrRecvStateService irRecvStateService = IrRecvStateService(&server, esp8266React.getSecurityManager());
+
 void setup() {
   // start serial and filesystem
   Serial.begin(SERIAL_BAUD_RATE);
@@ -22,6 +25,9 @@ void setup() {
 
   // load the initial light settings
   lightStateService.begin();
+
+  // load the initial IrRecv settings
+  irRecvStateService.begin();
 
   // start the light service
   lightMqttSettingsService.begin();
@@ -33,4 +39,7 @@ void setup() {
 void loop() {
   // run the framework's loop function
   esp8266React.loop();
+  irRecvStateService.recv([&]() {
+    irRecvStateService.update([&](IrRecvState& state) { return StateUpdateResult::CHANGED; }, "button_press");
+  });
 }

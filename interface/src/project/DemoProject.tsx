@@ -1,15 +1,15 @@
+import React, { FC } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import React, { FC } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Tab } from "@mui/material";
 
-import { Tab } from '@mui/material';
+import { RouterTabs, useRouterTab, useLayoutTitle } from "../components";
 
-import { RouterTabs, useRouterTab, useLayoutTitle } from '../components';
-
-import DemoInformation from './DemoInformation';
-import LightStateRestForm from './LightStateRestForm';
-import LightMqttSettingsForm from './LightMqttSettingsForm';
-import LightStateWebSocketForm from './LightStateWebSocketForm';
+import DemoInformation from "./DemoInformation";
+import LightStateRestForm from "./LightStateRestForm";
+import LightMqttSettingsForm from "./LightMqttSettingsForm";
+import LightStateWebSocketForm from "./LightStateWebSocketForm";
+import IrRecvStateWebSocketForm from "./IrRecvStateWebSocketForm";
 
 const DemoProject: FC = () => {
   useLayoutTitle("Demo Project");
@@ -19,12 +19,14 @@ const DemoProject: FC = () => {
     <>
       <RouterTabs value={routerTab}>
         <Tab value="information" label="Information" />
+        <Tab value="irRecv" label="Ir Recv" />
         <Tab value="rest" label="REST Example" />
         <Tab value="socket" label="WebSocket Example" />
         <Tab value="mqtt" label="MQTT Settings" />
       </RouterTabs>
       <Routes>
         <Route path="information" element={<DemoInformation />} />
+        <Route path="irRecv" element={<IrRecvStateWebSocketForm />} />
         <Route path="rest" element={<LightStateRestForm />} />
         <Route path="mqtt" element={<LightMqttSettingsForm />} />
         <Route path="socket" element={<LightStateWebSocketForm />} />
